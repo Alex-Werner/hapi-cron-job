@@ -225,7 +225,7 @@ exports.register = function (server, options, next) {
     }
     return next();
 };
-
+exports._parseText = _parseText;
 exports.register.attributes = {
     name: Package.name,
     version: Package.version

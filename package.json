@@ -26,5 +26,9 @@
   "dependencies": {
     "joi": "^9.1.0",
     "moment": "^2.15.1"
+  },
+  "devDependencies": {
+    "mocha": "^3.1.2",
+    "should": "^11.1.1"
   }
 }
