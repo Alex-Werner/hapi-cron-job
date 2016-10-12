@@ -18,8 +18,6 @@ Using npm:
 ## How to:  
 [See example](https://github.com/Alex-Werner/hapi-cron-job/tree/master/example)
 
-Assuming Server being a new Hapi.Server();
-
 ```
 var displayTime = function(){
     var ymd = new Date().toISOString().slice(0,new Date().toISOString().indexOf("T"));
@@ -33,9 +31,10 @@ Server.register({
              {
                 name:"diplay time",
                 enabled:true,
+                immediate:true,//Will execute function on starting
                 schedule:"every 1 s",
                 execute:displayTime,
-                environments:['development','staging']
+                environments:['development','staging']//using env (process.env.NODE_ENV)
              }
         ]
     }
