@@ -1,8 +1,6 @@
 'use strict';
-const cl = console.log;
 const Package = require('./package');
 const Joi = require('joi');
-const Later = require('later');
 const moment = require('moment');
 
 const internals = {
@@ -214,20 +212,17 @@ exports.register = function (server, options, next) {
         if (job.enabled && job.environments.indexOf(process.env.NODE_ENV) > -1) {
             enabledJobs.push(job);
             var textSchedule = job.schedule;
-            var scheduleParsed = Later.parse.text(textSchedule);
             var scheduleParsed = (_parseText(textSchedule));
             var fnToExec = job.execute;
             _setInterval(fnToExec, scheduleParsed);
             if(job.hasOwnProperty('immediate') && job.immediate){
                 _setTimeout(fnToExec,0);
             }
-
             if (options.hasOwnProperty('displayEnabledJobs') && options.displayEnabledJobs) {
                 console.log('Enabled job:', job.name, ".\n\t Scheduled:", job.schedule, '\n\t First Exec :'+scheduleParsed.firstExec+'\n\t Next exec:' + scheduleParsed.nextExec);
             }
         }
     }
-    
     return next();
 };
 

@@ -1,5 +1,5 @@
 {
-  "name": "hapi-cron-job",
+  "name": "hapi-cron-job-example",
   "version": "1.0.0",
   "description": "Cron/Schedule jobs for Hapi framework",
   "main": "index.js",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/Alex-Werner/hapi-cron-job#readme",
   "dependencies": {
-    "joi": "^9.1.0",
+    "hapi": "^15.1.1",
     "moment": "^2.15.1"
   }
 }
