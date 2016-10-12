@@ -2,6 +2,7 @@
 const Package = require('./package');
 const Joi = require('joi');
 const moment = require('moment');
+const cl = console.log;
 
 const internals = {
     jobsArrayScheme: Joi.array({
@@ -45,7 +46,9 @@ const _parseText = function (string) {
         week: /^(w(eek)?(s)?)\b/,
         //
         clockTime: /^(([0]?[1-9]|1[0-2]):[0-5]\d(\s)?(am|pm))\b/,
-        time: /^(([0]?\d|1\d|2[0-3]):[0-5]\d)\b/
+        fullTime: /^([0]?\d|[1]\d|2[0-3]):([0-5]\d)\b/,
+        anyNumber:/^([0-9]+)\b/,
+        plain:/^((plain))\b/,
     };
 
     function testMultiple(expr, testArr) {
@@ -67,6 +70,8 @@ const _parseText = function (string) {
             error = 1;//Date is not valid
         } else {
             if (TYPES['every'].test(splitText[0])) {
+                // cl(TYPES['clockTime'].test(splitText[1]));
+    
                 if (!testMultiple(splitText[2],
                         [
                             TYPES['second'],
@@ -77,8 +82,44 @@ const _parseText = function (string) {
                         ])) {
                     error = 3;//This is a wrong syntax
                 }
-                else if (TYPES['time'].test(splitText[1])) {
-                    error = 4;//This is not a valid time
+                else if (!TYPES['anyNumber'].test(splitText[1])) {
+                    if(TYPES['plain'].test(splitText[1])){
+                        var DETERMINED_TYPE = undefined;
+                        if (TYPES['minute'].test(splitText[2])) DETERMINED_TYPE = 'm';
+                        if (TYPES['hour'].test(splitText[2])) DETERMINED_TYPE = 'h';
+                        if (TYPES['day'].test(splitText[2])) DETERMINED_TYPE = 'd';
+    
+                        var now;
+                        switch (DETERMINED_TYPE) {
+                            case 'm':
+                                var m = 60;
+                                now = moment();
+                                firstExecSecRemaining = moment().add(1,'minute').startOf('minute').diff(now, 'second');
+                                nextExecSecRemaining = moment().add(2,'minute').startOf('minute').diff(now, 'second');
+                                intervalInSec = m;
+                                break;
+                            case 'h':
+                                var h = 3600;
+                                now = moment();
+                                firstExecSecRemaining = moment().add(1,'hour').startOf('hour').diff(now, 'second');
+                                nextExecSecRemaining = moment().add(2,'hour').startOf('hour').diff(now, 'second');
+                                intervalInSec = h;
+                                break;
+                            case 'd':
+                                var d = 86400;
+                                now = moment();
+                                firstExecSecRemaining = moment().add(1,'day').startOf('day').diff(now, 'second');
+                                nextExecSecRemaining = moment().add(2,'day').startOf('day').diff(now, 'second');
+                                intervalInSec = d;
+                                break;
+                            default:
+                                throw Error("Duh, that's an error in testing types allowed");
+                                break;
+        
+                        }
+                    }else{
+                        error = 4;//This is not a valid number
+                    }
                 }
                 else {
                     var DETERMINED_TYPE = undefined;
@@ -87,7 +128,7 @@ const _parseText = function (string) {
                     if (TYPES['hour'].test(splitText[2])) DETERMINED_TYPE = 'h';
                     if (TYPES['day'].test(splitText[2])) DETERMINED_TYPE = 'd';
                     if (TYPES['week'].test(splitText[2])) DETERMINED_TYPE = 'w';
-
+    
                     switch (DETERMINED_TYPE) {
                         case 's':
                             var s = Number(splitText[1]);
@@ -126,7 +167,7 @@ const _parseText = function (string) {
                     }
                 }
             }
-            if (TYPES['at'].test(splitText[0])) {
+            var handleAt=function(){
                 if (!TYPES['clockTime'].test(splitText[1] + ' ' + splitText[2])) {
                     error = 2;//This is a wrong time (we expected a 12 hour clock time with a am/pm ending)
                 } else {
@@ -152,10 +193,14 @@ const _parseText = function (string) {
                     nextExecSecRemaining = diffInSec + 86400;
                 }
             }
+            if (TYPES['at'].test(splitText[0])) {
+                handleAt();
+            }
+           
         }
         if(!firstExecSecRemaining || !nextExecSecRemaining || !intervalInSec || error!==0){
-            console.error('There is an error in parsingExpression'+error);
-            //TODO: Throw error here ?
+            // console.error('There is an error in parsingExpression','Err:'+error);
+            throw new Error('There is an error in parsingExpression, err:'+error);
         }
         return {
             firstExec: firstExecSecRemaining,
@@ -207,19 +252,29 @@ exports.register = function (server, options, next) {
     var len = options.jobs.length;
     while (len--) {
         var job = options.jobs[len];
-
         //If we enabled the job and asked it to start on our environment
         if (job.enabled && job.environments.indexOf(process.env.NODE_ENV) > -1) {
             enabledJobs.push(job);
             var textSchedule = job.schedule;
             var scheduleParsed = (_parseText(textSchedule));
-            var fnToExec = job.execute;
-            _setInterval(fnToExec, scheduleParsed);
-            if(job.hasOwnProperty('immediate') && job.immediate){
-                _setTimeout(fnToExec,0);
-            }
-            if (options.hasOwnProperty('displayEnabledJobs') && options.displayEnabledJobs) {
-                console.log('Enabled job:', job.name, ".\n\t Scheduled:", job.schedule, '\n\t First Exec :'+scheduleParsed.firstExec+'\n\t Next exec:' + scheduleParsed.nextExec);
+            if(scheduleParsed && scheduleParsed.firstExec && scheduleParsed.nextExec && scheduleParsed.intervalInSec){
+                var fnToExec = job.execute;
+                _setInterval(fnToExec, scheduleParsed);
+                if(job.hasOwnProperty('immediate') && job.immediate){
+                    _setTimeout(fnToExec,0);
+                }
+                if (options.hasOwnProperty('displayEnabledJobs') && options.displayEnabledJobs) {
+                    console.log('Enabled job:', job.name, ".\n\t Scheduled:", job.schedule, '\n\t First Exec :'+scheduleParsed.firstExec+'\n\t Next exec:' + scheduleParsed.nextExec);
+                }
+            }else{
+                var debugErr={
+                    message:"Issue on parseText",
+                    isScheduleParsed:!!scheduleParsed,
+                    isFirstExec:!!scheduleParsed.firstExec,
+                    isNextExec:!!scheduleParsed.nextExec,
+                    isIntervalInSec:!!scheduleParsed.intervalInSec
+                };
+                console.error(debugErr);
             }
         }
     }

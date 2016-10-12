@@ -2,7 +2,7 @@
 
 ## Current State
 
-V 1.0.0
+V 1.1.0
 
 Please, do not hesitate to submit any [issues](https://github.com/Alex-Werner/hapi-cron-job/issues), raises any [questions](https://github.com/Alex-Werner/hapi-cron-job/issues), submit any [PR](https://github.com/Alex-Werner/hapi-cron-job/pulls) or anything else (critism, stuff that need to be improved).
 
@@ -46,7 +46,9 @@ Server.register({
  
 You can specify any schedule format that look like : 
 
-- every : can be :```every 1 hour```, ```every 1 hours```, ```every 1 h```. Works with seconds, minutes, hours, days
+- every : can be :
+    * ```every 1 hour```, ```every 1 hours```, ```every 1 h```. (Works with seconds, minutes, hours, days)
+    * ```every plain hour```, ```every plain minutes```. (Works with min, hours, days)
 
 Mind that every, is absolute, if you started your server at 10:44 pm and set to 1 h, it will be executed at 11:44pm, 0:44am and so on...
 

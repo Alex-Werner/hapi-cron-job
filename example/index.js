@@ -17,13 +17,12 @@ Server.route(Routes.endpoints);
 /*
  * We want to have some cron job
  */
-
 Server.register({
     register:require('../'),//Replace with require('hapi-cron-job')
     options:{
         displayEnabledJobs:true,
         localTime:true,//Default is true, set False to GMT time TODO: default should be GTM time, and we allow to specify a timezone offset
-        jobs:[
+        jobs:[            
             {
                 name:"Backup",
                 enabled:false,
@@ -44,6 +43,13 @@ Server.register({
                 immediate:true,//Ask to an immediate execution of the fn
                 schedule:"at 8:00 pm",
                 execute:require('./cron-jobs/displayText.js').execute,
+                environments:['development','staging']
+            },
+            {
+                name:"diplay stuff",
+                enabled:true,
+                schedule:"every plain min",
+                execute:function(){console.log('stuff')},
                 environments:['development','staging']
             }
         ]

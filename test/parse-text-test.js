@@ -1,5 +1,6 @@
 var parseText = require('../index')._parseText;
 var should = require('should');
+var moment = require('moment');
 
 var cl = console.log;
 
@@ -91,7 +92,7 @@ describe('Parse text ', function() {
             parsed.should.have.property('error',0);
             parsed.should.have.property('firstExec',3600);
             parsed.should.have.property('nextExec',7200);
-            parsed.should.have.property('intervalInSec',3600);;
+            parsed.should.have.property('intervalInSec',3600);
         });
         it('every 1 hours', function() {
             var parsed = parseText('every 1 hours');
@@ -169,6 +170,85 @@ describe('Parse text ', function() {
             parsed.should.have.property('firstExec',59875200);
             parsed.should.have.property('nextExec',119750400);
             parsed.should.have.property('intervalInSec',59875200);
+        });
+    });
+    describe('Parse at pm', function(){
+        it('at 1:05 am', function() {
+            var parsed = parseText('at 1:05 am');
+            var now = moment();
+            var firstExec = moment(now.format("YYYY-MM-DD")+" 01:05 AM");
+            var nextExec = moment(now.format("YYYY-MM-DD")+" 01:05 AM").add(1,'day');
+    
+            if(firstExec.unix()-now.unix()<0){
+                firstExec = moment(now.format("YYYY-MM-DD")+" 01:05 AM").add(1,'day');
+                nextExec = moment(now.format("YYYY-MM-DD")+" 01:05 AM").add(2,'day');
+            }
+            parsed.should.have.property('error',0);
+            parsed.should.have.property('firstExec',firstExec.diff(now,'second'));
+            parsed.should.have.property('nextExec',nextExec.diff(now,'second'));
+            parsed.should.have.property('intervalInSec',86400);
+        });
+        it('at 02:55 am', function() {
+            var parsed = parseText('at 02:55 am');
+            var now = moment();
+            var firstExec = moment(now.format("YYYY-MM-DD")+" 02:55 AM");
+            var nextExec = moment(now.format("YYYY-MM-DD")+" 02:55 AM").add(1,'day');
+            parsed.should.have.property('error',0);
+            parsed.should.have.property('firstExec',firstExec.diff(now,'second'));
+            parsed.should.have.property('nextExec',nextExec.diff(now,'second'));
+            parsed.should.have.property('intervalInSec',86400);
+        });
+        it('at 3:32 pm', function() {
+            var parsed = parseText('at 3:32 am');
+            var now = moment();
+            var firstExec = moment(now.format("YYYY-MM-DD")+" 03:32 AM");
+            var nextExec = moment(now.format("YYYY-MM-DD")+" 03:32 AM").add(1,'day');
+            parsed.should.have.property('error',0);
+            parsed.should.have.property('firstExec',firstExec.diff(now,'second'));
+            parsed.should.have.property('nextExec',nextExec.diff(now,'second'));
+            parsed.should.have.property('intervalInSec',86400);
+        });
+        it('at 04:49 pm', function() {
+            var parsed = parseText('at 04:49 am');
+            var now = moment();
+            var firstExec = moment(now.format("YYYY-MM-DD")+" 04:49 AM");
+            var nextExec = moment(now.format("YYYY-MM-DD")+" 04:49 AM").add(1,'day');
+            parsed.should.have.property('error',0);
+            parsed.should.have.property('firstExec',firstExec.diff(now,'second'));
+            parsed.should.have.property('nextExec',nextExec.diff(now,'second'));
+            parsed.should.have.property('intervalInSec',86400);
+        });
+    });
+    describe('Parse plain text', function(){
+        it('every plain min', function() {
+            var parsed = parseText('every plain min');
+            var now = moment();
+            var firstExec = moment().add(1,'minute').startOf('minute');
+            var nextExec = moment().add(2,'minute').startOf('minute');
+            parsed.should.have.property('error',0);
+            parsed.should.have.property('firstExec',firstExec.diff(now,'second'));
+            parsed.should.have.property('nextExec',nextExec.diff(now,'second'));
+            parsed.should.have.property('intervalInSec',60);
+        });
+        it('every plain hour', function() {
+            var parsed = parseText('every plain hour');
+            var now = moment();
+            var firstExec = moment().add(1,'hour').startOf('hour');
+            var nextExec = moment().add(2,'hour').startOf('hour');
+            parsed.should.have.property('error',0);
+            parsed.should.have.property('firstExec',firstExec.diff(now,'second'));
+            parsed.should.have.property('nextExec',nextExec.diff(now,'second'));
+            parsed.should.have.property('intervalInSec',3600);
+        });
+        it('every plain day', function() {
+            var parsed = parseText('every plain day');
+            var now = moment();
+            var firstExec = moment().add(1,'day').startOf('day');
+            var nextExec = moment().add(2,'day').startOf('day');
+            parsed.should.have.property('error',0);
+            parsed.should.have.property('firstExec',firstExec.diff(now,'second'));
+            parsed.should.have.property('nextExec',nextExec.diff(now,'second'));
+            parsed.should.have.property('intervalInSec',86400);
         });
     });
 });
