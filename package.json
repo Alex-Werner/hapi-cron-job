@@ -1,0 +1,31 @@
+{
+  "name": "hapi-cron-job",
+  "version": "1.0.0",
+  "description": "Cron/Schedule jobs for Hapi framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/**/*-test.js --reporter dot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Alex-Werner/hapi-cron-job.git"
+  },
+  "keywords": [
+    "cron",
+    "schedule"
+  ],
+  "author": {
+    "name": "Alex-Werner",
+    "email": "alex@werner.fr"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Alex-Werner/hapi-cron-job/issues"
+  },
+  "homepage": "https://github.com/Alex-Werner/hapi-cron-job#readme",
+  "dependencies": {
+    "hapi": "^15.1.1",
+    "joi": "^9.1.0",
+    "moment": "^2.15.1"
+  }
+}
