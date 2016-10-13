@@ -37,7 +37,7 @@ Server.register({
              {
                 name:"diplay time",
                 enabled:true,
-                enabledCallback:enabledCallback,//Executed at end of import of the jobs, just before immediate Callback
+                enabledCallback:enabledCallback,//Executed at end of import of the job, just before immediate Callback
                 immediate:true,//Will execute function on starting
                 schedule:"every 1 s",
                 execute:displayTime,
@@ -50,6 +50,21 @@ Server.register({
      if(err){throw err;}
  });
 ```
+
+## Options 
+
+* ```jobs``` : An array of jobs
+    * ```name```: (String) Name of your cron job
+    * ```enabled```: (Bool) Do we want to enable our cron job
+    * ```enabledCallback```: (Function, optional) Function to execute at end of import of the job, before call (if immediate is true)
+    * ```schedule```: (String) See allowed Schedule, example or use.
+    * ```execute```: (Function) Function to execute at schedule
+    * ```immediate```: (Bool, optional, default:false)
+    * ```environments```:(Array(String), optional) Use process.env.NODE_ENV to set your environments. If no environments set consider as active.
+    
+* ```localTime```: (default: true, optional), If false, use GMT instead of local server time
+* ```callback```: (optional), A callback function that will be executed at the end of the import process, {return: enabledJobs(Array)}
+
 ## Allowed schedule
  
 You can specify any schedule format that look like : 
@@ -58,9 +73,10 @@ You can specify any schedule format that look like :
     * ```every 1 hour```, ```every 1 hours```, ```every 1 h```. (Works with seconds, minutes, hours, days)
     * ```every plain hour```, ```every plain minutes```. (Works with min, hours, days)
 
-Mind that every, is absolute, if you started your server at 10:44 pm and set to 1 h, it will be executed at 11:44pm, 0:44am and so on...
+Mind that every X PERIOD, is absolute, if you started your server at 10:44 pm and set to 1 h, it will be executed at 11:44pm, 0:44am and so on...
+If you need to be executed at a plain hour/min/day, use ```every plain hour```
 
-- at : can be ```at 01:00 pm```, ```01:00 am```, ```1:00am``` etc...
+- at : can be ```at 01:00 pm```, ```01:00 am```, ```1:00am``` etc... (will be called daily at specified time).
     
 ## Definitions 
 
