@@ -21,7 +21,6 @@ var enabledCallback = function(job,scheduleParsed){console.log('Enabled job:', j
 Server.register({
     register:require('../'),//Replace with require('hapi-cron-job')
     options:{
-        displayEnabledJobs:true,
         localTime:true,//Default is true, set False to GMT time TODO: default should be GTM time, and we allow to specify a timezone offset
         jobs:[            
             {
@@ -38,7 +37,7 @@ Server.register({
                 // enabledCallback:enabledCallback,
                 schedule:"every 1 s",
                 execute:require('./cron-jobs/displayTime.js').execute,
-                // environments:['development','staging']
+                environments:['development','staging']
             },
             {
                 name:"diplay text",
@@ -47,7 +46,7 @@ Server.register({
                 immediate:true,//Ask to an immediate execution of the fn
                 schedule:"at 8:00 pm",
                 execute:require('./cron-jobs/displayText.js').execute,
-                environments:['development','staging']
+                environments:['development']
             },
             {
                 name:"diplay stuff",
