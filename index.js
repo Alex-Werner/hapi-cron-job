@@ -265,12 +265,15 @@ exports.register = function (server, options, next) {
             if(scheduleParsed && scheduleParsed.firstExec && scheduleParsed.nextExec && scheduleParsed.intervalInSec){
                 var fnToExec = job.execute;
                 _setInterval(fnToExec, scheduleParsed);
-                if(job.hasOwnProperty('immediate') && job.immediate){
-                    _setTimeout(fnToExec,0);
-                }
+                
+                //We want this to be before immediate execute
                 if(job.hasOwnProperty('enabledCallback')){
                     job.enabledCallback(job, scheduleParsed);
                 }
+                if(job.hasOwnProperty('immediate') && job.immediate){
+                    _setTimeout(fnToExec,0);
+                }
+                
 
 
                 //Todo : Delete this in next major version
