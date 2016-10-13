@@ -2,7 +2,7 @@
 
 ## Current State
 
-V 1.1.0
+V 1.2.0
 
 Please, do not hesitate to submit any [issues](https://github.com/Alex-Werner/hapi-cron-job/issues), raises any [questions](https://github.com/Alex-Werner/hapi-cron-job/issues), submit any [PR](https://github.com/Alex-Werner/hapi-cron-job/pulls) or anything else (critism, stuff that need to be improved).
 
@@ -24,6 +24,12 @@ var displayTime = function(){
     var hms = new Date().toISOString().substr(11, 8);
     console.log(ymd+" "+hms);
 };
+var callback = function(enabledJobs){
+    //Do something with enabledJobs
+}
+var enabledCallback = function(job, scheduleParsed){
+    //Do something with job and scheduleParsed
+}
 Server.register({
     register:require('hapi-cron-job'),
     options:{
@@ -31,12 +37,14 @@ Server.register({
              {
                 name:"diplay time",
                 enabled:true,
+                enabledCallback:enabledCallback,//Executed at end of import of the jobs, just before immediate Callback
                 immediate:true,//Will execute function on starting
                 schedule:"every 1 s",
                 execute:displayTime,
                 environments:['development','staging']//using env (process.env.NODE_ENV)
              }
-        ]
+        ],
+        callback:callback//Executed at end of process and return enabledJobs
     }
 },function(err){
      if(err){throw err;}
