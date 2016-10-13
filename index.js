@@ -10,13 +10,15 @@ const internals = {
         enabled: Joi.boolean(),
         schedule: Joi.string(),
         execute: Joi.func(),
+        enabledCallback:Joi.func().optional(),
         immediate: Joi.boolean().optional(),
-        environments: Joi.array(Joi.string())
+        environments: Joi.array(Joi.string()).optional()
     }),
     optionsScheme: Joi.object({
         jobs: Joi.array().items(),
-        displayEnabledJobs: Joi.boolean().optional(),
-        localTime: Joi.boolean().optional()
+        displayEnabledJobs: Joi.boolean().optional(),//Todo : Delete this in next major version
+        localTime: Joi.boolean().optional(),
+        callback:Joi.func().optional()
     })
 };
 
@@ -192,14 +194,13 @@ const _parseText = function (string) {
                     firstExecSecRemaining = diffInSec;
                     nextExecSecRemaining = diffInSec + 86400;
                 }
-            }
+            };
             if (TYPES['at'].test(splitText[0])) {
                 handleAt();
             }
            
         }
         if(!firstExecSecRemaining || !nextExecSecRemaining || !intervalInSec || error!==0){
-            // console.error('There is an error in parsingExpression','Err:'+error);
             throw new Error('There is an error in parsingExpression, err:'+error);
         }
         return {
@@ -252,8 +253,12 @@ exports.register = function (server, options, next) {
     var len = options.jobs.length;
     while (len--) {
         var job = options.jobs[len];
-        //If we enabled the job and asked it to start on our environment
-        if (job.enabled && job.environments.indexOf(process.env.NODE_ENV) > -1) {
+        //If we enabled the job
+        if (job.enabled) {
+            //If we ask to start on our environment, but we aren't in this env, skip it
+            if(job.environments && job.environments.indexOf(process.env.NODE_ENV) == -1){
+                continue;
+            }
             enabledJobs.push(job);
             var textSchedule = job.schedule;
             var scheduleParsed = (_parseText(textSchedule));
@@ -263,8 +268,14 @@ exports.register = function (server, options, next) {
                 if(job.hasOwnProperty('immediate') && job.immediate){
                     _setTimeout(fnToExec,0);
                 }
+                if(job.hasOwnProperty('enabledCallback')){
+                    job.enabledCallback(job, scheduleParsed);
+                }
+
+
+                //Todo : Delete this in next major version
                 if (options.hasOwnProperty('displayEnabledJobs') && options.displayEnabledJobs) {
-                    console.log('Enabled job:', job.name, ".\n\t Scheduled:", job.schedule, '\n\t First Exec :'+scheduleParsed.firstExec+'\n\t Next exec:' + scheduleParsed.nextExec);
+                    // console.log('Enabled job:', job.name, ".\n\t Scheduled:", job.schedule, '\n\t First Exec :'+scheduleParsed.firstExec+'\n\t Next exec:' + scheduleParsed.nextExec);
                 }
             }else{
                 var debugErr={
@@ -277,6 +288,9 @@ exports.register = function (server, options, next) {
                 console.error(debugErr);
             }
         }
+    }
+    if(options.hasOwnProperty('callback')){
+        options.callback(enabledJobs);
     }
     return next();
 };
