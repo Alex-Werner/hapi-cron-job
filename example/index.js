@@ -17,6 +17,7 @@ Server.route(Routes.endpoints);
 /*
  * We want to have some cron job
  */
+var enabledCallback = function(job,scheduleParsed){console.log('Enabled job:', job.name, ".\n\t Scheduled:", job.schedule, '\n\t First Exec :'+scheduleParsed.firstExec+'\n\t Next exec:' + scheduleParsed.nextExec);};
 Server.register({
     register:require('../'),//Replace with require('hapi-cron-job')
     options:{
@@ -26,6 +27,7 @@ Server.register({
             {
                 name:"Backup",
                 enabled:false,
+                enabledCallback:enabledCallback,
                 schedule:"every 1 hour",
                 execute:require('./cron-jobs/backup.js').execute,
                 environments:['development','staging']
@@ -33,13 +35,15 @@ Server.register({
             {
                 name:"diplay time",
                 enabled:true,
+                // enabledCallback:enabledCallback,
                 schedule:"every 1 s",
                 execute:require('./cron-jobs/displayTime.js').execute,
-                environments:['development','staging']
+                // environments:['development','staging']
             },
             {
                 name:"diplay text",
                 enabled:true,
+                enabledCallback:enabledCallback,
                 immediate:true,//Ask to an immediate execution of the fn
                 schedule:"at 8:00 pm",
                 execute:require('./cron-jobs/displayText.js').execute,
@@ -48,11 +52,15 @@ Server.register({
             {
                 name:"diplay stuff",
                 enabled:true,
+                enabledCallback:enabledCallback,
                 schedule:"every plain min",
                 execute:function(){console.log('stuff')},
                 environments:['development','staging']
             }
-        ]
+        ],
+        callback:function(enabledJobs){
+            console.log('Enabled Jobs', enabledJobs);
+        }
     }
 }, function(err){
     if(err){throw err;}
