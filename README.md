@@ -87,9 +87,9 @@ If you need to be executed at a plain hour/min/day, use ```every plain hour```
 
 ## Next : 
 
+- Handle daylight saving time (so, notice that we actually don't handle this)
 - Parse : ``` after NUMBER PERIOD```
 - Parse : ``` every DAYS at TIMES```
-
 - Parse : ``` every PERIOD on the ORDINALNUMBER PERIOD of the PERIOD``` 
 eg : ```every minutes on the first day of the month```
 - Parse : ```every ORDINALNUMBER PERIOD of PERIOD```   

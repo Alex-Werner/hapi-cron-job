@@ -257,6 +257,7 @@ exports.register = function (server, options, next) {
         if (job.enabled) {
             //If we ask to start on our environment, but we aren't in this env, skip it
             if(job.environments && job.environments.indexOf(process.env.NODE_ENV) == -1){
+                console.error(job.name+" has been skipped as env asked are", job.environments, 'and actual process.env.NODE_ENV is', process.env.NODE_ENV+'.');
                 continue;
             }
             enabledJobs.push(job);
