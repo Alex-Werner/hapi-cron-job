@@ -35,23 +35,33 @@ var _LOCALDate = {
 };
 var _Date = _LOCALDate;
 
+const MAX_INT_32 = 2147483647;
+const PERIODS = {
+    week:604800,
+    day:86400,
+    hour:3600,
+    minute:60,
+    second:1
+    
+};
+const TYPES = {
+    //
+    every: /^every\b/,
+    at: /^(at|@)\b/,
+    //
+    second: /^(s|sec(ond)?(s)?)\b/,
+    minute: /^(m|min(ute)?(s)?)\b/,
+    hour: /^(h(our)?(s)?)\b/,
+    day: /^(d(ay)?(s)?)\b/,
+    week: /^(w(eek)?(s)?)\b/,
+    //
+    clockTime: /^(([0]?[1-9]|1[0-2]):[0-5]\d(\s)?(am|pm))\b/,
+    fullTime: /^([0]?\d|[1]\d|2[0-3]):([0-5]\d)\b/,
+    anyNumber:/^([0-9]+)\b/,
+    plain:/^((plain))\b/,
+};
 const _parseText = function (string) {
-    const TYPES = {
-        //
-        every: /^every\b/,
-        at: /^(at|@)\b/,
-        //
-        second: /^(s|sec(ond)?(s)?)\b/,
-        minute: /^(m|min(ute)?(s)?)\b/,
-        hour: /^(h(our)?(s)?)\b/,
-        day: /^(d(ay)?(s)?)\b/,
-        week: /^(w(eek)?(s)?)\b/,
-        //
-        clockTime: /^(([0]?[1-9]|1[0-2]):[0-5]\d(\s)?(am|pm))\b/,
-        fullTime: /^([0]?\d|[1]\d|2[0-3]):([0-5]\d)\b/,
-        anyNumber:/^([0-9]+)\b/,
-        plain:/^((plain))\b/,
-    };
+    
 
     function testMultiple(expr, testArr) {
         for (var i = 0; i < testArr.length; i++) {
@@ -65,7 +75,7 @@ const _parseText = function (string) {
         var error = 0;
         var firstExecSecRemaining = null,
             nextExecSecRemaining = null,
-            intervalInSec = 86400;//Seconds in a Day
+            intervalInSec = PERIODS.day;//Seconds in a Day
 
         var splitText = str.split(' ');
         if (splitText.length != 3) {
@@ -94,21 +104,21 @@ const _parseText = function (string) {
                         var now;
                         switch (DETERMINED_TYPE) {
                             case 'm':
-                                var m = 60;
+                                var m = PERIODS.minute;
                                 now = moment();
                                 firstExecSecRemaining = moment().add(1,'minute').startOf('minute').diff(now, 'second');
                                 nextExecSecRemaining = moment().add(2,'minute').startOf('minute').diff(now, 'second');
                                 intervalInSec = m;
                                 break;
                             case 'h':
-                                var h = 3600;
+                                var h = PERIODS.hour;
                                 now = moment();
                                 firstExecSecRemaining = moment().add(1,'hour').startOf('hour').diff(now, 'second');
                                 nextExecSecRemaining = moment().add(2,'hour').startOf('hour').diff(now, 'second');
                                 intervalInSec = h;
                                 break;
                             case 'd':
-                                var d = 86400;
+                                var d = PERIODS.day;
                                 now = moment();
                                 firstExecSecRemaining = moment().add(1,'day').startOf('day').diff(now, 'second');
                                 nextExecSecRemaining = moment().add(2,'day').startOf('day').diff(now, 'second');
@@ -133,31 +143,31 @@ const _parseText = function (string) {
     
                     switch (DETERMINED_TYPE) {
                         case 's':
-                            var s = Number(splitText[1]);
+                            var s = Number(splitText[1]) * PERIODS.second;
                             firstExecSecRemaining = s;
                             nextExecSecRemaining = s + firstExecSecRemaining;
                             intervalInSec = s;
                             break;
                         case 'm':
-                            var m = Number(splitText[1]) * 60;
+                            var m = Number(splitText[1]) * PERIODS.minute;
                             firstExecSecRemaining = m;
                             nextExecSecRemaining = m + firstExecSecRemaining;
                             intervalInSec = m;
                             break;
                         case 'h':
-                            var h = Number(splitText[1]) * 3600;
+                            var h = Number(splitText[1]) * PERIODS.hour;
                             firstExecSecRemaining = h;
                             nextExecSecRemaining = h + firstExecSecRemaining;
                             intervalInSec = h;
                             break;
                         case 'd':
-                            var d = Number(splitText[1]) * 86400;
+                            var d = Number(splitText[1]) * PERIODS.day;
                             firstExecSecRemaining = d;
                             nextExecSecRemaining = d + firstExecSecRemaining;
                             intervalInSec = d;
                             break;
                         case 'w':
-                            var w = Number(splitText[1]) * 604800;
+                            var w = Number(splitText[1]) * PERIODS.week;
                             firstExecSecRemaining = w;
                             nextExecSecRemaining = w + firstExecSecRemaining;
                             intervalInSec = w;
@@ -192,7 +202,7 @@ const _parseText = function (string) {
                         diffInSec = Math.abs(diff.diff(momTime, 'second'));
                     }
                     firstExecSecRemaining = diffInSec;
-                    nextExecSecRemaining = diffInSec + 86400;
+                    nextExecSecRemaining = diffInSec + PERIODS.day;
                 }
             };
             if (TYPES['at'].test(splitText[0])) {
@@ -213,8 +223,7 @@ const _parseText = function (string) {
     return parseExpression(string.toLowerCase());
 };
 const _setTimeout = function(fn, second){    
-    const maxTimeout = 2147483647;
-    if(second>maxTimeout){
+    if(second>MAX_INT_32){
         console.error("Couldn't execute Function. Max allowable value for setTimeout has to be no more than 2147483648 (Int32).")
     }else{
         setTimeout(fn, second);
@@ -279,8 +288,6 @@ exports.register = function (server, options, next) {
                 if(job.hasOwnProperty('immediate') && job.immediate){
                     _setTimeout(fnToExec,0);
                 }
-                
-
 
                 //Todo : Delete this in next major version
                 if (options.hasOwnProperty('displayEnabledJobs') && options.displayEnabledJobs) {
