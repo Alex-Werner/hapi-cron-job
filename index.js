@@ -213,7 +213,12 @@ const _parseText = function (string) {
     return parseExpression(string.toLowerCase());
 };
 const _setTimeout = function(fn, second){    
-  setTimeout(fn, second);
+    const maxTimeout = 2147483647;
+    if(second>maxTimeout){
+        console.error("Couldn't execute Function. Max allowable value for setTimeout has to be no more than 2147483648 (Int32).")
+    }else{
+        setTimeout(fn, second);
+    }
 };
 
 const _setInterval = function (fn, sched) {
