@@ -72,10 +72,11 @@ You can specify any schedule format that look like :
     * ```every 1 hour```, ```every 1 hours```, ```every 1 h```. (Works with seconds, minutes, hours, days)
     * ```every plain hour```, ```every plain minutes```. (Works with min, hours)
 
-Mind that every X PERIOD, is absolute, if you started your server at 10:44 pm and set to every 1 h, it will be executed at 11:44pm, 0:44am and so on...
+Mind that every X PERIOD, is absolute, if you started your server at 10:44 pm and set to every 1 h, it will be executed at 11:44pm, 0:44am and so on...  
 You can have your cron executed at the next plain hour and every next hour then.  
-Use ```every plain hour``` for that. (eg:If started at 3:46, next exec will be 4:00 then 5:00...)
-Same can be done with minutes with ```every plain minute``` (eg: Started at 3:46, next exec will be 3:50,4:00,..)
+  
+Use ```every plain hour``` for that. (eg:If started at 3:46, next exec will be 4:00 then 5:00...)  
+Same can be done with minutes with ```every plain minute``` (eg: Started at 3:46, next exec will be 3:50,4:00,..)  
 
     
 ## Definitions 
@@ -94,8 +95,8 @@ Same can be done with minutes with ```every plain minute``` (eg: Started at 3:46
 - Parse : ``` every PERIOD on the ORDINALNUMBER PERIOD of the PERIOD``` 
 eg : ```every minutes on the first day of the month```
 - Parse : ```every ORDINALNUMBER PERIOD of PERIOD```   
-eg: ```every first day of the month```
-~~- Handle 24-hour times (at 01:00 will be 01:00am, at 16:00 will be 4:00pm) : DONE~~
+eg: ```every first day of the month```  
+- ~~Handle 24-hour times (at 01:00 will be 01:00am, at 16:00 will be 4:00pm) : ~~ DONE
 - Handle days
 - handle months
 - Handle years
@@ -104,18 +105,21 @@ eg: ```every first day of the month```
 
 If this can help even one person, I would be hapi enough (see what I did here ? :D).   
 I will work on that project till I will be confident enought that it will answer perfectly to the need to at least one person.  
-If you are that person, please, do not hesitate to :   
-    * submit any [issues](https://github.com/Alex-Werner/hapi-cron-job/issues),
-    * raises any [questions](https://github.com/Alex-Werner/hapi-cron-job/issues),
-    * submit any [PR](https://github.com/Alex-Werner/hapi-cron-job/pulls)
-    * or anything else (critism, stuff that need to be improved).
+If you are that person, please, do not hesitate to : 
+
+- submit any [issues](https://github.com/Alex-Werner/hapi-cron-job/issues),
+- raises any [questions](https://github.com/Alex-Werner/hapi-cron-job/issues),
+- submit any [PR](https://github.com/Alex-Werner/hapi-cron-job/pulls)
+- or anything else (critism, stuff that need to be improved).
+
+
 You could also drop me a word on twitter : [@obusco](https://twitter.com/obusco).  
 
 I would like to have any feedback that you use it, may be even for what and how I could help improving this package to fit your needs.  
 
 ## About stuff
 
-* *Limitations* :  
+* **Limitations** :  
 1) About max_time : For now (till I get smart and find a way to handle that), you can't plan something over 68 years.   
 I was stuck at 24 days initially (INT 32 limit on setTimeout), but I excess that limit by forcing me to work in seconds instead of milliseconds. 
 I will, probably, I think, may be, move that limit away.  
