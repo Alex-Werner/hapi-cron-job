@@ -240,15 +240,5 @@ describe('Parse text ', function() {
             parsed.should.have.property('nextExec',nextExec.diff(now,'second'));
             parsed.should.have.property('intervalInSec',3600);
         });
-        it('every plain day', function() {
-            var parsed = parseText('every plain day');
-            var now = moment();
-            var firstExec = moment().add(1,'day').startOf('day');
-            var nextExec = moment().add(2,'day').startOf('day');
-            parsed.should.have.property('error',0);
-            parsed.should.have.property('firstExec',firstExec.diff(now,'second'));
-            parsed.should.have.property('nextExec',nextExec.diff(now,'second'));
-            parsed.should.have.property('intervalInSec',86400);
-        });
     });
 });
