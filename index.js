@@ -33,7 +33,7 @@ var getTimeData = function (timezone) {
     var date = new Date();
     if (timezone == "local") {
         return {
-            time: date.toLocaleTimeString(),
+            time: date.toLocaleTimeString('en-US', { hour12: false }),
             date: date.toLocaleDateString(),
             datetime: date.toLocaleString(),
             UTCEpochMS: date.getTime(),
