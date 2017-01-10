@@ -135,5 +135,12 @@ The reason we doing that, is that, far from marketing or stuff. You will know ea
 just looking the first number. Mind that some major version (breaking changes) can be absolutely necessary (bugfix). 
 But at least it won't break your code  
 
+## Contributors
+
+I want to take time to thank : 
+- [@webdepp](https://github.com/webdepp) for his [PR](https://github.com/Alex-Werner/hapi-cron-job/pull/4) (Fixing [#2](https://github.com/Alex-Werner/hapi-cron-job/issues/2))
+
+Much love to you ! <3
+
 ## Inspired by 
  - [Later](http://bunkat.github.io/later/)
