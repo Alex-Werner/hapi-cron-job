@@ -1,7 +1,10 @@
 {
   "name": "hapi-cron-job",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Cron/Schedule jobs for Hapi framework",
+  "engines":{
+    "node":">6.9.0"
+  },
   "main": "index.js",
   "scripts": {
     "test": "mocha test/**/*-test.js --reporter dot"

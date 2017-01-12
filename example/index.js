@@ -40,7 +40,7 @@ Server.register([{
                     enabled: true,
                     enabledCallback: enabledCallback,
                     immediate: true,
-                    schedule: "every 10 s",
+                    schedule: "every 1 s",
                     execute: require('./cron-jobs/displayTime.js').execute,
                     // environments: ['development', 'staging']
                 },
