@@ -1,3 +1,6 @@
+const Joi = require('joi');
+
+const Package = require('./package')
 const parseText = require('./parseText')
 
 const internals = {
@@ -93,4 +96,8 @@ const register = (server, options, next) => {
     return next();
 };
 
-exports.register = register 
+exports.register = register
+exports.register.attributes = {
+    name: Package.name,
+    version: Package.version
+};
