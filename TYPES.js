@@ -14,7 +14,4 @@ const TYPES = {
     anyNumber: /^([0-9]+)\b/,
     plain: /^((plain))\b/,
 }
-
-const stringTest = (type, string) => TYPES[type].test(string)
-
-module.exports = stringTest
+module.exports = TYPES;

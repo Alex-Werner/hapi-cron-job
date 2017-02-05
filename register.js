@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const Package = require('./package')
-const parseText = require('./parseText')
+const parseExpression = require('./parsers').parseExpression
 
 const internals = {
     jobsArrayScheme: Joi.array({
@@ -46,7 +46,7 @@ const register = (server, options, next) => {
                 return acc
             }
             acc.push(job)
-            const scheduleParsed = (_parseText(job.schedule))
+            const scheduleParsed = (parseExpression(job.schedule))
         }
         return acc
     }, [])
@@ -65,7 +65,7 @@ const register = (server, options, next) => {
             }
             enabledJobs.push(job);
             var textSchedule = job.schedule;
-            var scheduleParsed = (_parseText(textSchedule));
+            var scheduleParsed = (parseExpression(textSchedule));
             if (scheduleParsed && scheduleParsed.firstExec && scheduleParsed.nextExec && scheduleParsed.intervalInSec) {
                 var fnToExec = job.execute;
                 _setInterval(fnToExec, scheduleParsed);
@@ -80,7 +80,7 @@ const register = (server, options, next) => {
                 
             } else {
                 var debugErr = {
-                    message: "Issue on parseText",
+                    message: "Issue on parseExpression",
                     isScheduleParsed: !!scheduleParsed,
                     isFirstExec: !!scheduleParsed.firstExec,
                     isNextExec: !!scheduleParsed.nextExec,

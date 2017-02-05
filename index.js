@@ -1,6 +1,6 @@
 'use strict'
 
-const _parseText = require('./parseText')
+const parsers = require('./parsers')
 const register = require('./register')
 
 var date = new Date();
@@ -41,4 +41,4 @@ const _setInterval = function (fn, sched) {
 };
 
 
-exports._parseText = _parseText;
+exports._parseText = parsers.parseExpression;

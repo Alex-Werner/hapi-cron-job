@@ -19,7 +19,7 @@ const setTime = splitedSchedule => stringTest('fullTime', splitedSchedule)
   : undefined
 
 const handleAt = (splitedSchedule, text) => {
-  const time = clockTime[text]
+  const time = clockTime[text](splitedSchedule)
     || setTime(splitedSchedule)
     || handleError(2)
   
