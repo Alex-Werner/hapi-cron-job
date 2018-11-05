@@ -1,8 +1,7 @@
-const handleError = require('./handleError')
-const stringTest = require('./stringTest')
-const getTimeData = require('../getTimeData')
-const PERIODS = require('../periods')
-
+const handleError = require('./handleError');
+const stringTest = require('./stringTest');
+const getTimeData = require('../helpers/getTimeData');
+const periods = require('../helpers/periods');
 
 const clockTime = {
   am: (text, splitedSchedule) =>
@@ -31,13 +30,13 @@ const handleAt = (splitedSchedule, text) => {
   }
 
   const diffSec = (calcDiff => calcDiff < 0
-    ? calcDiff + PERIODS.day
-    : calcDiff)(diff.s + diff.m * PERIODS.minute + diff.h * PERIODS.hour)
+    ? calcDiff + periods.day
+    : calcDiff)(diff.s + diff.m * periods.minute + diff.h * periods.hour)
 
   return {
     firstExec: diffSec,
-    nextExec: diffSec + PERIODS.day,
-    intervalInSec: PERIODS.day
+    nextExec: diffSec + periods.day,
+    intervalInSec: periods.day
   }    
 }
 

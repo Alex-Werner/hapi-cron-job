@@ -7,7 +7,6 @@ const PERIODS = {
     hour: 3600,
     minute: 60,
     second: 1
-    
 }
 
 module.exports = PERIODS
