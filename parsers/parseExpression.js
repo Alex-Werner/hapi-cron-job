@@ -1,8 +1,8 @@
 const handleAt = require('./handleAt')
 const handleError = require('./handleError')
 const stringTest = require('./stringTest')
-const PERIODS = require('../PERIODS')
-const TYPES = require('../TYPES')
+const periods = require('../helpers/periods')
+const types = require('../helpers/types')
 
 const testMultiple = (expr, testArr) => testArr.some(value => value.test(expr))
 
@@ -20,31 +20,31 @@ const parseExpression = str => {
   const text = splitText[2]
   const splitedSchedule = splitText[1]
 
-  const intervalInit = { intervalInSec: PERIODS.day }
+  const intervalInit = { intervalInSec: periods.day }
 
   const textLength = splitText.length
   
   // Date is not valid    
   if (textLength > 3 || textLength < 2) return handleError(1)
   
-  if (TYPES['every'].test(splitText[0])) {
+  if (types['every'].test(splitText[0])) {
       
-    if (!testMultiple(text, timeRanges.map(range => TYPES[range])))
+    if (!testMultiple(text, timeRanges.map(range => types[range])))
       return handleError(1) //This is a wrong syntax
-    else if (!TYPES['anyNumber'].test(splitedSchedule)) {
-      if (TYPES['plain'].test(splitedSchedule)) {
+    else if (!types['anyNumber'].test(splitedSchedule)) {
+      if (types['plain'].test(splitedSchedule)) {
         timeRanges.filter(value => value === 'minute' || value === 'hour')
           .reverse()
           .reduce((acc, value) => {
-            if (TYPES[value].test(text)) {
+            if (types[value].test(text)) {
               const fullTime = (new Date()).toTimeString().substr(0, 8)
               const nowSeconds = Number(fullTime.substr(6, 2))
               const minutes = value === 'minute'
                 ? nowSeconds
-                : Number(fullTime.substr(3, 2)) * PERIODS.minute - nowSeconds
-              acc.intervalInSec = PERIODS[value]
-              acc.firstExecSecRemaining = PERIODS[value] - minutes
-              acc.nextExecSecRemaining = 2 * PERIODS[value] - minutes
+                : Number(fullTime.substr(3, 2)) * periods.minute - nowSeconds
+              acc.intervalInSec = periods[value]
+              acc.firstExecSecRemaining = periods[value] - minutes
+              acc.nextExecSecRemaining = 2 * periods[value] - minutes
             }
             return acc
           }, intervalInit)
@@ -58,8 +58,8 @@ const parseExpression = str => {
     }
     else {
         timeRanges.reverse().reduce((acc, value) => {
-            if (TYPES[value].test(text)) {
-                const time = Number(splitText[1]) * PERIODS[value]
+            if (types[value].test(text)) {
+                const time = Number(splitText[1]) * periods[value]
                 acc.firstExecSecRemaining = time
                 acc.nextExecSecRemaining = time*2 // Fix me pls
                 acc.intervalInSec = time

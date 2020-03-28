@@ -1,4 +1,4 @@
-const TYPES = {
+const types = {
     //
     every: /^every\b/,
     at: /^(at|@)\b/,
@@ -14,4 +14,4 @@ const TYPES = {
     anyNumber: /^([0-9]+)\b/,
     plain: /^((plain))\b/,
 }
-module.exports = TYPES;
+module.exports = types;
